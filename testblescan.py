@@ -59,8 +59,7 @@ while True:
         avg_distance = beacon_dist_dict[mac]['distance'] / beacon_dist_dict[mac]['count_updates']
         print("\navg_distance von " + mac + ": " + str(avg_distance))
 
-        ts = time.time()
-        timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+        timestamp = datetime.datetime.now().isoformat()
 
         payload = {"senderID": str(pi_mac), "beaconID": mac, "distanceToBeacon": avg_distance,
                    "timestamp": timestamp}
