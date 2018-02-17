@@ -1,3 +1,4 @@
+import datetime
 import json
 import math
 import time
@@ -55,18 +56,19 @@ while True:
 
     print(beacon_dist_dict)
 
-    for beacon in beacon_dist_dict:
-        print(beacon)
-        avg_distance = beacon
+    for mac in beacon_dist_dict:
+        avg_distance = beacon_dist_dict[mac]['distance'] / beacon_dist_dict[mac]['count_updates']
+        print("avg_distance: " + str(avg_distance))
 
-    # ts = time.time()
-    # timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-    #
-    # payload = {"senderID": str(pi_mac), "beaconID": bluetoothDevice['mac'], "distanceToBeacon": distance,
-    #            "timestamp": timestamp}
-    # headers = {"Content-Type": "application/json"}
-    #
-    # print(server_url)
-    # r = requests.post(server_url + '/distance', data=json.dumps(payload), headers=headers)
-    # print(r.status_code + '\n\n')
+        ts = time.time()
+        timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+
+        payload = {"senderID": str(pi_mac), "beaconID": mac, "distanceToBeacon": avg_distance,
+                   "timestamp": timestamp}
+        headers = {"Content-Type": "application/json"}
+
+        print(server_url)
+        r = requests.post(server_url + '/distance', data=json.dumps(payload), headers=headers)
+        print(r.status_code + '\n\n')
+
     time.sleep(10)
