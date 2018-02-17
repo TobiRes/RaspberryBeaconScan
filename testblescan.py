@@ -11,8 +11,6 @@ import blescan
 all_macs = []
 pi_mac = get_mac()
 
-beacon_dist_dict = {}
-
 dev_id = 0
 
 try:
@@ -34,8 +32,8 @@ while True:
         all_macs.append(beacon['macAddress'])
     print("\n\nRegistrierte Beacons aktualisiert:")
     print(all_macs)
-    rssi_sum = 0.0
-    count = 0.0
+
+    beacon_dist_dict = {}
 
     for x in range(0, 20):
         returnedList = blescan.parse_events(sock, 10)
@@ -43,7 +41,7 @@ while True:
         for bluetoothDevice in returnedList:
             for mac in all_macs:
                 if mac.lower() == bluetoothDevice['mac'].lower():
-                    print("MAC erkannt:", mac.lower())
+                    print("MAC erkannt: " + str(mac.lower()))
 
                     distance = math.pow(10, ((bluetoothDevice['txp'] - bluetoothDevice['rssi']) / (10 * 2.75)))
 
@@ -57,6 +55,10 @@ while True:
 
     print(beacon_dist_dict)
 
+    for beacon in beacon_dist_dict:
+        print(beacon)
+        avg_distance = beacon
+
     # ts = time.time()
     # timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
     #
@@ -67,4 +69,4 @@ while True:
     # print(server_url)
     # r = requests.post(server_url + '/distance', data=json.dumps(payload), headers=headers)
     # print(r.status_code + '\n\n')
-    time.sleep(5)
+    time.sleep(10)
