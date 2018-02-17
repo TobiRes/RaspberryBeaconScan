@@ -37,9 +37,9 @@ while True:
 
     beacon_dist_dict = {}
 
-    for x in range(0, 50):
+    for x in range(0, 30):
         returnedList = blescan.parse_events(sock, 10)
-        print("Scanne Bluetooth Geraete... (" + str(x) + "/20)")
+        print("Scanne Bluetooth Geraete... (" + str(x) + "/30)")
         for bluetoothDevice in returnedList:
             for mac in all_macs:
                 if mac.lower() == bluetoothDevice['mac'].lower():
