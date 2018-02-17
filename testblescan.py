@@ -1,8 +1,7 @@
 import json
-
+import time
 import bluetooth._bluetooth as bluez
 import requests
-
 import blescan
 
 all_macs = []
@@ -19,24 +18,22 @@ blescan.hci_le_set_scan_parameters(sock)
 blescan.hci_enable_le_scan(sock)
 
 server_url = 'http://10.200.20.150:8080'
-r = requests.get(url=server_url + '/beacon')
 
-beacons = json.loads(r.text)
-
-for beacon in beacons:
-	all_macs.append(beacon['macAddress'])
-
-print(all_macs)
-
-# while True:
-#     returnedList = blescan.parse_events(sock, 10)
-#     print("----------")
-#     for beacon in returnedList:
-#         print(beacon)
-#         if beacon['mac'] == 'cb:d0:ac:84:ed:2f':
-#             payload = {'senderID': 'pi1', 'beaconID': 'beacon_a', 'distanceToBeacon': 4.2, 'timestamp': '12:34'}
-#             headers = {"Content-Type": "application/json"}
-#             r = requests.post(url + '/push', data=json.dumps(payload), headers=headers)
-#             print(r.status_code)
-#             print(r.text)
-#             break
+while True:
+	r = requests.get(url=server_url + '/beacon')
+	beacons = json.loads(r.text)
+	for beacon in beacons:
+		all_macs.append(beacon['macAddress'])
+	for x in range(0, 20):
+		returnedList = blescan.parse_events(sock, 10)
+		for bluetoothDevice in returnedList:
+			for mac in all_macs:
+				if mac.lower() == bluetoothDevice['mac'].lower():
+					print("success", mac.lower())
+					payload = {'macAddress': bluetoothDevice['mac']}
+             				headers = {"Content-Type": "application/json"}
+             				r = requests.post(server_url + '/beacon', data=json.dumps(payload), headers=headers)
+					print(r.status_code)
+					print(r.text)
+		time.sleep(1)
+	time.sleep(300)
