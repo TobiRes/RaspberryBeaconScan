@@ -54,11 +54,9 @@ while True:
                                                  'rssi': bluetoothDevice['rssi'], 'count_updates': 1,
                                                  'distance': distance}
 
-    print(beacon_dist_dict)
-
     for mac in beacon_dist_dict:
         avg_distance = beacon_dist_dict[mac]['distance'] / beacon_dist_dict[mac]['count_updates']
-        print("avg_distance: " + str(avg_distance))
+        print("\navg_distance von " + mac + ": " + str(avg_distance))
 
         ts = time.time()
         timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
@@ -69,6 +67,7 @@ while True:
 
         print(server_url)
         r = requests.post(server_url + '/distance', data=json.dumps(payload), headers=headers)
-        print(r.status_code + '\n\n')
+        print(str(r.status_code) + '\n')
 
-    time.sleep(10)
+    print("Warte 5 Sekunden...\n")
+    time.sleep(5)
