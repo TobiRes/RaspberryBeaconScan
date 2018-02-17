@@ -24,11 +24,14 @@ while True:
 	beacons = json.loads(r.text)
 	for beacon in beacons:
 		all_macs.append(beacon['macAddress'])
+	print("Registrierte Beacons aktualisiert:")
+	print(all_macs)
 	for x in range(0, 20):
 		returnedList = blescan.parse_events(sock, 10)
+		print("Bluetooth Geraete gefunden.")
 		for bluetoothDevice in returnedList:
 			for mac in all_macs:
-				if mac.lower() == bluetoothDevice['mac'].lower():
+				if bluetoothDevice['mac'] and mac.lower() == bluetoothDevice['mac'].lower():
 					print("success", mac.lower())
 					payload = {'macAddress': bluetoothDevice['mac']}
              				headers = {"Content-Type": "application/json"}
