@@ -37,7 +37,7 @@ while True:
 
     beacon_dist_dict = {}
 
-    for x in range(0, 20):
+    for x in range(0, 50):
         returnedList = blescan.parse_events(sock, 10)
         print("Scanne Bluetooth Geraete... (" + str(x) + "/20)")
         for bluetoothDevice in returnedList:
@@ -70,5 +70,5 @@ while True:
         r = requests.post(server_url + '/distance', data=json.dumps(payload), headers=headers)
         print(str(r.status_code) + '\n')
 
-    print("Warte 5 Sekunden...\n")
-    time.sleep(5)
+    print("Warte 30 Sekunden...\n")
+    time.sleep(30)
