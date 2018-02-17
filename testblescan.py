@@ -30,7 +30,8 @@ while True:
     r = requests.get(url=server_url + '/beacon')
     beacons = json.loads(r.text)
     for beacon in beacons:
-        all_macs.append(beacon['macAddress'])
+        if not beacon['macAddress'] in all_macs:
+            all_macs.append(beacon['macAddress'])
     print("\n\nRegistrierte Beacons aktualisiert:")
     print(all_macs)
 
