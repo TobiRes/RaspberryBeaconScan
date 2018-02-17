@@ -3,8 +3,12 @@ import time
 import bluetooth._bluetooth as bluez
 import requests
 import blescan
+import datetime
+import time
+from uuid import getnode as get_mac
 
 all_macs = []
+pi_mac = get_mac()
 
 dev_id = 0
 try:
@@ -33,9 +37,12 @@ while True:
 			for mac in all_macs:
 				if bluetoothDevice['mac'] and mac.lower() == bluetoothDevice['mac'].lower():
 					print("success", mac.lower())
-					payload = {'macAddress': bluetoothDevice['mac']}
+					print(bluetoothDevice)
+					ts = time.time()	
+					timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+					payload = { "senderID": str(pi_mac), "beaconID": bluetoothDevice['mac'], "distanceToBeacon": 999, "timestamp": timestamp }
              				headers = {"Content-Type": "application/json"}
-             				r = requests.post(server_url + '/beacon', data=json.dumps(payload), headers=headers)
+             				r = requests.post(server_url + '/distance', data=json.dumps(payload), headers=headers)
 					print(r.status_code)
 					print(r.text)
 		time.sleep(1)
