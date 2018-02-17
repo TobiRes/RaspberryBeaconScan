@@ -5,7 +5,7 @@ import requests
 
 import blescan
 
-allBeacons = []
+all_macs = []
 
 dev_id = 0
 try:
@@ -18,10 +18,15 @@ except:
 blescan.hci_le_set_scan_parameters(sock)
 blescan.hci_enable_le_scan(sock)
 
-server_url = 'http://10.200.18.137:8080'
+server_url = 'http://10.200.20.150:8080'
 r = requests.get(url=server_url + '/beacon')
-print(r.status_code)
-print(r.text)
+
+beacons = json.loads(r.text)
+
+for beacon in beacons:
+	all_macs.append(beacon['macAddress'])
+
+print(all_macs)
 
 # while True:
 #     returnedList = blescan.parse_events(sock, 10)
