@@ -1,4 +1,3 @@
-import datetime
 import json
 import math
 import time
@@ -11,6 +10,8 @@ import blescan
 
 all_macs = []
 pi_mac = get_mac()
+
+beacon_dist_dict = {}
 
 dev_id = 0
 
@@ -41,27 +42,29 @@ while True:
         print("Scanne Bluetooth Geraete... (" + str(x) + "/20)")
         for bluetoothDevice in returnedList:
             for mac in all_macs:
-                if bluetoothDevice['mac'] and mac.lower() == bluetoothDevice['mac'].lower():
+                if mac.lower() == bluetoothDevice['mac'].lower():
                     print("MAC erkannt:", mac.lower())
-                    rssi_sum += bluetoothDevice['rssi']
-                    txp = bluetoothDevice['txp']
-                    count += 1.0
 
-    rssi_avg = rssi_sum / count
-    distance = math.pow(10, ((txp - rssi_avg) / (10 * 2.75)))
+                    distance = math.pow(10, ((bluetoothDevice['txp'] - bluetoothDevice['rssi']) / (10 * 2.75)))
 
-    print('\nrssi_avg: ' + str(rssi_avg))
-    print('txp: ' + str(txp))
-    print('calculated distance: ' + str(distance))
+                    if mac in beacon_dist_dict:
+                        beacon_dist_dict[mac]['distance'] += distance
+                        beacon_dist_dict[mac]['count_updates'] += 1.0
+                    else:
+                        beacon_dist_dict[mac] = {'mac': mac, 'txp': bluetoothDevice['txp'],
+                                                 'rssi': bluetoothDevice['rssi'], 'count_updates': 1,
+                                                 'distance': distance}
 
-    ts = time.time()
-    timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+    print(beacon_dist_dict)
 
-    payload = {"senderID": str(pi_mac), "beaconID": bluetoothDevice['mac'], "distanceToBeacon": distance,
-               "timestamp": timestamp}
-    headers = {"Content-Type": "application/json"}
-
-    print(server_url)
-    r = requests.post(server_url + '/distance', data=json.dumps(payload), headers=headers)
-    print(r.status_code + '\n\n')
+    # ts = time.time()
+    # timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+    #
+    # payload = {"senderID": str(pi_mac), "beaconID": bluetoothDevice['mac'], "distanceToBeacon": distance,
+    #            "timestamp": timestamp}
+    # headers = {"Content-Type": "application/json"}
+    #
+    # print(server_url)
+    # r = requests.post(server_url + '/distance', data=json.dumps(payload), headers=headers)
+    # print(r.status_code + '\n\n')
     time.sleep(5)
