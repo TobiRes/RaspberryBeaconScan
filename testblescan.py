@@ -31,7 +31,7 @@ while True:
     beacons = json.loads(r.text)
     for beacon in beacons:
         all_macs.append(beacon['macAddress'])
-    print("Registrierte Beacons aktualisiert:")
+    print("\n\nRegistrierte Beacons aktualisiert:")
     print(all_macs)
     rssi_sum = 0.0
     count = 0.0
@@ -43,7 +43,6 @@ while True:
             for mac in all_macs:
                 if bluetoothDevice['mac'] and mac.lower() == bluetoothDevice['mac'].lower():
                     print("MAC erkannt:", mac.lower())
-                    print(bluetoothDevice)
                     rssi_sum += bluetoothDevice['rssi']
                     txp = bluetoothDevice['txp']
                     count += 1.0
@@ -51,9 +50,9 @@ while True:
     rssi_avg = rssi_sum / count
     distance = math.pow(10, ((txp - rssi_avg) / (10 * 2.75)))
 
-    print('rssi_avg:', rssi_avg)
-    print('txp:', txp)
-    print('calculated distance:', distance)
+    print('\nrssi_avg: ' + str(rssi_avg))
+    print('txp: ' + str(txp))
+    print('calculated distance: ' + str(distance))
 
     ts = time.time()
     timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
@@ -62,6 +61,7 @@ while True:
                "timestamp": timestamp}
     headers = {"Content-Type": "application/json"}
 
+    print(server_url)
     r = requests.post(server_url + '/distance', data=json.dumps(payload), headers=headers)
-    print(r.status_code)
-    time.sleep(10)
+    print(r.status_code + '\n\n')
+    time.sleep(5)
