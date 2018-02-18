@@ -23,7 +23,16 @@ except:
 blescan.hci_le_set_scan_parameters(sock)
 blescan.hci_enable_le_scan(sock)
 
+def getMAC(interface='eth0'):
+ try:
+   str = open('/sys/class/net/%s/address' %interface).read()
+ except:
+   str = "00:00:00:00:00:00"
+ return str[0:17]
+
 server_url = 'http://10.200.18.137:8080'
+piMAC = getMAC()
+print("Hello, I'm pi " + piMAC)
 
 while True:
 
@@ -61,7 +70,7 @@ while True:
 
         timestamp = datetime.datetime.now().isoformat()
 
-        payload = {"senderID": str(pi_mac), "beaconID": mac, "distanceToBeacon": avg_distance,
+        payload = {"senderID": piMAC, "beaconID": mac, "distanceToBeacon": avg_distance,
                    "timestamp": timestamp}
         headers = {"Content-Type": "application/json"}
 
